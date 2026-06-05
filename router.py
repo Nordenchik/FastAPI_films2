@@ -14,8 +14,14 @@ router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
-def films_page(request: Request, db: Session = Depends(get_db)):
+def films_page(request: Request, db: Session = Depends(get_db), sort: str = 'id'):
     films = db.query(Film).order_by(Film.id).all()
+    if sort == 'id':
+        films = db.query(Film).order_by(Film.id).all()
+    elif sort == 'name':
+        films = db.query(Film).order_by(Film.name).all()
+    elif sort == 'price':
+        films = db.query(Film).order_by(Film.price).all()
     return templates.TemplateResponse(request=request, name="films.html", context={"request": request, "films": films})
 
 @router.post("/films/create")

@@ -37,7 +37,7 @@
             }
 
             tr:hover {
-                background-color: #f1f1f1;
+                background-color: #454545;
             }
         </style>
     </head>
@@ -45,9 +45,9 @@
         <h1>Список фільмів</h1>
         <table>
             <tr>
-                <th>ID</th>
-                <th>Назва</th>
-                <th>Ціна квитка</th>
+                <th><a href="/?sort=id">ID</a></th>
+                <th><a href="/?sort=name">Назва</a></th>
+                <th><a href="/?sort=price">Ціна квитка</a></th>
             </tr>
             {% for film in films %}
                 <tr>
