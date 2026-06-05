@@ -7,12 +7,12 @@
             body {
                 font-family: Arial, sans-serif;
                 margin: 40px;
-                background-color: #f9f9f9;
+                background-color: #2a2a2a;
             }
 
             h1 {
                 text-align: center;
-                color: #333;
+                color: white;
             }
 
             table {
@@ -20,7 +20,9 @@
                 margin: 0 auto;
                 border-collapse: collapse;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                background-color: white;
+                color: white;
+                background-color: #3c3c3c;
+                border-color: white;
             }
 
             th, td {
@@ -30,7 +32,7 @@
             }
 
             th {
-                background-color: #4CAF50;
+                background-color: #7016ff;
                 color: white;
             }
 
@@ -47,11 +49,11 @@
                 <th>Назва</th>
                 <th>Ціна квитка</th>
             </tr>
-            {% for user in users %}
+            {% for film in films %}
                 <tr>
                     <td>{{ film.id }}</td>
                     <td>{{ film.name }}</td>
-                    <td>{{ film.price }}</td>
+                    <td>{{ film.price }} грн</td>
                 </tr>
             {% endfor %}
         </table>

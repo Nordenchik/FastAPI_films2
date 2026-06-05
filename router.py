@@ -53,7 +53,7 @@ def read_film(film_id: int, db: Session = Depends(get_db)):
 
 @router.post("/api/films", response_model=FilmRead)
 def create_film(film: FilmCreate, db: Session = Depends(get_db)):
-    db_film = film(name=film.name)
+    db_film = Film(name=film.name, price=film.price)
     db.add(db_film)
     db.commit()
     db.refresh(db_film)
