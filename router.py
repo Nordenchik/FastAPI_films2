@@ -3,6 +3,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, Form, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
@@ -14,14 +15,15 @@ router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
-def films_page(request: Request, db: Session = Depends(get_db), sort: str = 'id'):
-    films = db.query(Film).order_by(Film.id).all()
-    if sort == 'id':
-        films = db.query(Film).order_by(Film.id).all()
-    elif sort == 'name':
-        films = db.query(Film).order_by(Film.name).all()
-    elif sort == 'price':
-        films = db.query(Film).order_by(Film.price).all()
+def films_page(request: Request, db: Session = Depends(get_db), sort: str = 'id', order: str = 'asc'):
+    cols = {
+        'id': Film.id,
+        'name': Film.name,
+        'price': Film.price,
+    }
+    col = cols.get(sort, Film.id)
+    if order == 'desc': films = db.query(Film).order_by(col.desc()).all()
+    else: films = db.query(Film).order_by(col).all()
     return templates.TemplateResponse(request=request, name="films.html", context={"request": request, "films": films})
 
 @router.post("/films/create")
@@ -41,7 +43,7 @@ def update_film_form(film_id: int, name: str = Form(...), db: Session = Depends(
 
 @router.delete("/films/{film_id}/delete")
 def delete_film_form(film_id: int, db: Session = Depends(get_db)):
-    film = db.query(film).filter(film.id == film_id).first()
+    film = db.query(Film).filter(Film.id == film_id).first()
     if not film: raise HTTPException(status_code=404, detail="Фільм не знайдено")
     db.delete(film)
     db.commit()
@@ -53,7 +55,7 @@ def read_films(db: Session = Depends(get_db)):
 
 @router.get("/api/films/{film_id}", response_model=FilmRead)
 def read_film(film_id: int, db: Session = Depends(get_db)):
-    film = db.query(film).filter(film.id == film_id).first()
+    film = db.query(Film).filter(Film.id == film_id).first()
     if not film: raise HTTPException(status_code=404, detail="Фільм не знайдено")
     return film
 
@@ -67,7 +69,7 @@ def create_film(film: FilmCreate, db: Session = Depends(get_db)):
 
 @router.put("/api/films/{film_id}", response_model=FilmRead)
 def update_film(film_id: int, payload: FilmUpdate, db: Session = Depends(get_db)):
-    film = db.query(film).filter(film.id == film_id).first()
+    film = db.query(Film).filter(Film.id == film_id).first()
     if not film: raise HTTPException(status_code=404, detail="Фільм не знайдено")
     film.name = payload.name
     db.commit()
@@ -76,7 +78,7 @@ def update_film(film_id: int, payload: FilmUpdate, db: Session = Depends(get_db)
 
 @router.delete("/api/films/{film_id}")
 def delete_film(film_id: int, db: Session = Depends(get_db)):
-    film = db.query(film).filter(film.id == film_id).first()
+    film = db.query(Film).filter(Film.id == film_id).first()
     if not film: raise HTTPException(status_code=404, detail="Фільм не знайдено")
     db.delete(film)
     db.commit()

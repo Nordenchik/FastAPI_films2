@@ -39,11 +39,32 @@
             th a {
                 color: white;
                 text-decoration: none;
+                position: relative;
+                padding-right: 1.4em;
             }
 
             th a:hover {
                 color: #cacaca;
             }
+
+            th a::after {
+                content: '\2195'; /* ↕ */
+                position: absolute;
+                right: 0.4em;
+                top: 50%;
+                transform: translateY(-50%);
+                display: inline-block;
+                width: 1em;
+                text-align: center;
+                font-size: 0.8em;
+                opacity: 0;
+                transition: opacity 0.12s ease;
+                pointer-events: none;
+            }
+            
+            th a.sorted-asc::after { content: '\25B2'; }   /* ▲ */
+            th a.sorted-desc::after { content: '\25BC'; }  /* ▼ */
+            th a:hover::after { opacity: 1; }
 
             tr:hover {
                 background-color: #454545;
@@ -53,10 +74,12 @@
     <body>
         <h1>Список фільмів</h1>
         <table>
+            {% set current_sort = request.query_params.get('sort', 'id') %}
+            {% set current_order = request.query_params.get('order', 'asc') %}
             <tr>
-                <th><a href="/?sort=id">ID</a></th>
-                <th><a href="/?sort=name">Назва</a></th>
-                <th><a href="/?sort=price">Ціна квитка</a></th>
+                <th><a class="{{ 'sorted-' + current_order if current_sort == 'id' else '' }}" href="/?sort=id&order={{ 'desc' if current_sort == 'id' and current_order == 'asc' else 'asc' }}">ID</a></th>
+                <th><a class="{{ 'sorted-' + current_order if current_sort == 'name' else '' }}" href="/?sort=name&order={{ 'desc' if current_sort == 'name' and current_order == 'asc' else 'asc' }}">Назва</a></th>
+                <th><a class="{{ 'sorted-' + current_order if current_sort == 'price' else '' }}" href="/?sort=price&order={{ 'desc' if current_sort == 'price' and current_order == 'asc' else 'asc' }}">Ціна квитка</a></th>
             </tr>
             {% for film in films %}
                 <tr>
